@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SurveyList from './components/SurveyList';
 import SurveyCreate from './components/SurveyCreate';
 import SurveyEdit from './components/SurveyEdit';
@@ -10,13 +10,13 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Switch>
-          <Route exact path="/" component={SurveyList} />
-          <Route path="/create" component={SurveyCreate} />
-          <Route path="/edit/:id" component={SurveyEdit} />
-          <Route path="/respond/:id" component={SurveyResponse} />
-          <Route path="/results/:id" component={SurveyResults} />
-        </Switch>
+        <Routes>
+          <Route path="/" element={<SurveyList />} />
+          <Route path="/create" element={<SurveyCreate />} />
+          <Route path="/edit/:id" element={<SurveyEdit />} />
+          <Route path="/respond/:id" element={<SurveyResponse />} />
+          <Route path="/results/:id" element={<SurveyResults />} />
+        </Routes>
       </div>
     </Router>
   );
