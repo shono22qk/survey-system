@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -26,12 +26,36 @@ function SurveyResponse() {
     }
   };
 
+  const handleAnswer = (questionId, optionId) => {
+    setAnswers({
+      ...answers,
+      [questionId]: optionId
+    });
+  };
+
   if (!survey) return <div>Loading...</div>;
 
   return (
-    <div>
-      {/* コンポーネントの残りの部分 */}
-    </div>
+    <form onSubmit={handleSubmit}>
+      <h2>{survey.title}</h2>
+      {survey.questions.map((question) => (
+        <div key={question._id}>
+          <h3>{question.text}</h3>
+          {question.options.map((option) => (
+            <label key={option._id}>
+              <input
+                type="radio"
+                name={question._id}
+                value={option._id}
+                onChange={() => handleAnswer(question._id, option._id)}
+              />
+              {option.text}
+            </label>
+          ))}
+        </div>
+      ))}
+      <button type="submit">Submit Response</button>
+    </form>
   );
 }
 
