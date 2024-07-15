@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function SurveyEdit() {
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([]);
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -21,7 +21,7 @@ function SurveyEdit() {
     e.preventDefault();
     try {
       await axios.patch(`https://survey-system-jhjx.onrender.com/api/surveys/${id}`, { title, questions });
-      history.push('/');
+      navigate('/');
     } catch (err) {
       console.error(err);
     }

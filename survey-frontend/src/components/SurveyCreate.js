@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function SurveyCreate() {
   const [title, setTitle] = useState('');
   const [questions, setQuestions] = useState([{ text: '', options: [{ text: '' }] }]);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post('https://survey-system-jhjx.onrender.com/api/surveys', { title, questions });
-      history.push('/');
+      navigate('/');
     } catch (err) {
       console.error(err);
     }
