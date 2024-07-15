@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function SurveyResponse() {
   const [survey, setSurvey] = useState(null);
   const [answers, setAnswers] = useState({});
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -20,7 +20,7 @@ function SurveyResponse() {
     e.preventDefault();
     try {
       await axios.post(`https://survey-system-jhjx.onrender.com/api/surveys/${id}/respond`, { answers });
-      history.push('/');
+      navigate('/');
     } catch (err) {
       console.error(err);
     }
@@ -30,4 +30,9 @@ function SurveyResponse() {
 
   return (
     <div>
-     
+      {/* コンポーネントの残りの部分 */}
+    </div>
+  );
+}
+
+export default SurveyResponse;
