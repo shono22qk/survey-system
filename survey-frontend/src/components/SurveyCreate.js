@@ -35,11 +35,31 @@ function SurveyCreate() {
     }
   };
 
-  // ... (残りのコンポーネントコードは変更なし)
+  // タイトルの入力ハンドラを追加
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  // 質問の追加ハンドラ
+  const addQuestion = () => {
+    setQuestions([...questions, { text: '', options: [{ text: '' }] }]);
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* ... (フォームの内容は変更なし) */}
+      <input
+        type="text"
+        value={title}
+        onChange={handleTitleChange}
+        placeholder="アンケートのタイトル"
+      />
+      {/* 質問のレンダリング */}
+      {questions.map((question, index) => (
+        <div key={index}>
+          {/* 質問の入力フィールド */}
+        </div>
+      ))}
+      <button type="button" onClick={addQuestion}>質問を追加</button>
       <button type="submit">アンケートを作成</button>
     </form>
   );
