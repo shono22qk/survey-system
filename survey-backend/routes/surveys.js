@@ -1,48 +1,77 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+const express = require('express');
+const router = express.Router();
+const Survey = require('../models/Survey');
 
-function SurveyCreate() {
-  const [title, setTitle] = useState('');
-  const [questions, setQuestions] = useState([{ text: '', options: [{ text: '' }] }]);
-  const navigate = useNavigate();
+// すべてのアンケートを取得
+router.get('/', async (req, res) => {
+  try {
+    const surveys = await Survey.find();
+    res.json(surveys);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      console.log('送信データ:', { title, questions });  // デバッグ用
+// 新しいアンケートを作成
+router.post('/', async (req, res) => {
+  const survey = new Survey({
+    title: req.body.title,
+    questions: req.body.questions
+  });
 
-      const response = await axios.post('https://survey-system-jhjx.onrender.com/api/surveys', { title, questions });
-      
-      console.log('APIレスポンス:', response);  // デバッグ用
+  try {
+    const newSurvey = await survey.save();
+    res.status(201).json(newSurvey);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
-      if (response.status === 201) {
-        console.log('アンケートが正常に作成されました');
-        navigate('/');
-      } else {
-        console.error('予期せぬステータスコード:', response.status);
-      }
-    } catch (err) {
-      console.error('アンケート作成中にエラーが発生しました:', err);
-      if (err.response) {
-        console.error('エラーレスポンス:', err.response.data);
-        console.error('エラーステータス:', err.response.status);
-      } else if (err.request) {
-        console.error('リクエストエラー:', err.request);
-      } else {
-        console.error('エラーメッセージ:', err.message);
-      }
+// 特定のアンケートを取得
+router.get('/:id', getSurvey, (req, res) => {
+  res.json(res.survey);
+});
+
+// アンケートを更新
+router.patch('/:id', getSurvey, async (req, res) => {
+  if (req.body.title != null) {
+    res.survey.title = req.body.title;
+  }
+  if (req.body.questions != null) {
+    res.survey.questions = req.body.questions;
+  }
+  try {
+    const updatedSurvey = await res.survey.save();
+    res.json(updatedSurvey);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// アンケートを削除
+router.delete('/:id', getSurvey, async (req, res) => {
+  try {
+    await res.survey.remove();
+    res.json({ message: 'アンケートが削除されました' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ミドルウェア関数
+async function getSurvey(req, res, next) {
+  let survey;
+  try {
+    survey = await Survey.findById(req.params.id);
+    if (survey == null) {
+      return res.status(404).json({ message: 'アンケートが見つかりません' });
     }
-  };
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 
-  // ... (残りのコンポーネントコードは変更なし)
-
-  return (
-    <form onSubmit={handleSubmit}>
-      {/* ... (フォームの内容は変更なし) */}
-      <button type="submit">アンケートを作成</button>
-    </form>
-  );
+  res.survey = survey;
+  next();
 }
 
-export default SurveyCreate;
+module.exports = router;
